@@ -60,11 +60,20 @@ server.delete('/api/users/:id', (req,res) => {
   const id = req.params.id;
   const deleted = users.find(u => u.id === id);
   users = users.filter(u => u.id !== id);
-  res.status(200).json(deleted);
+  if (!deleted) {
+    //not the right id
+    res.status(404).json({ message: "The user with the specified ID does not exist." });
+  } else{
+    //right id
+    if(deleted){
+      res.status(200).json(deleted);
+    }else{
+      res.status(500).json({ errorMessage: "The user could not be removed" });
+    }
+  }
 })
 
 //PUT request WORKS
-
 server.put('/api/users/:id', (req, res) => {
   const id = req.params.id;
   const changes = req.body;
