@@ -36,9 +36,8 @@ server.get('/api/users', (req, res) => {
 
 server.get('/api/users/:id', (req, res) => {
   const id = req.params.id;
-  users = users.filter(u => users.id !== id);
-  const thatOne = users.find(users.id === id); //find the user with specific id
-
+  const u = users.filter(u => u.id !== id);
+  const thatOne = users.find(u => u.id === id); //find the user with specific id
   if(thatOne) {
     //if same id
     res.status(200).json(thatOne);
@@ -58,7 +57,10 @@ server.post('/api/users', (req, res) => {
 
 //DELETE users 
 server.delete('/api/users/:id', (req,res) => {
-
+  const id = req.params.id;
+  const deleted = users.find(u => u.id === id);
+  users = users.filter(u => u.id !== id);
+  res.status(200).json(deleted);
 })
 
 //PUT request WORKS
