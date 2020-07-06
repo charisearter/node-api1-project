@@ -75,7 +75,7 @@ server.put('/api/users/:id', (req, res) => {
     res.status(200).json(found);
   } else {
     //not found
-    res.status(404).json({ message: 'User not found' });
+    res.status(404).json({ message: 'The user with the specified ID does not exist.' });
   }
   users = users.filter(u => u.id !== id);
   res.json(found);
