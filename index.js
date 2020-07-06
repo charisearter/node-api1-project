@@ -69,10 +69,17 @@ server.put('/api/users/:id', (req, res) => {
   const id = req.params.id;
   const changes = req.body;
   let found = users.find(u => u.id === id);
-  if (found) {
+  //if no name or bio
+  if(!changes.name || !changes.bio ) {
+    res.status(400).json({ errorMessage: 'Please provide name and bio for the user.' })
+  } else if (found) {
     // found
-    Object.assign(found, changes); //update object with changes
+    found = Object.assign(found, changes); //update object with changes
+    if (found) {
     res.status(200).json(found);
+    }else{
+      res.status(500).json({ errorMessage: 'The user information could not be modified.' });
+    }
   } else {
     //not found
     res.status(404).json({ message: 'The user with the specified ID does not exist.' });
