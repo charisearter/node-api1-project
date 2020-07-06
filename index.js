@@ -26,7 +26,7 @@ server.get('/', (req, res) => {
   res.send('<h1>It is working!</h1>');
 });
 
-//GET request for users (only array of users)
+//GET request for users (only array of users) WORKS
 
 server.get('/api/users', (req, res) => {
   res.status(200).json(users); //send user list 
@@ -34,22 +34,21 @@ server.get('/api/users', (req, res) => {
 
 //GET request for users by id (specific user)
 
-// server.get('/api/users/:id', (req, res) => {
-//   const id = req.params.id;
-//   users = users.filter(u => users.id !== id);
-//   const thatOne = users.find(users.id === id); //find the user with specific id
-  
+server.get('/api/users/:id', (req, res) => {
+  const id = req.params.id;
+  users = users.filter(u => users.id !== id);
+  const thatOne = users.find(users.id === id); //find the user with specific id
 
-//   if(thatOne) {
-//     //if same id
-//     res.status(200).json(thatOne);
-//   }else{
-//     //not found
-//     res.status(404).json({ message: 'No user by that id found' });
-//   }
-// });
+  if(thatOne) {
+    //if same id
+    res.status(200).json(thatOne);
+  }else{
+    //not found
+    res.status(404).json({ message: 'No user by that id found' });
+  }
+});
 
-//Post users (add a user)
+//POST users (add a user) WORKS
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
   newUser.id = shortid.generate();
@@ -57,6 +56,28 @@ server.post('/api/users', (req, res) => {
   res.status(200).json(newUser); //send user list 
 });
 
+//DELETE users 
+server.delete('/api/users/:id', (req,res) => {
+
+})
+
+//PUT request WORKS
+
+server.put('/api/users/:id', (req, res) => {
+  const id = req.params.id;
+  const changes = req.body;
+  let found = users.find(u => u.id === id);
+  if (found) {
+    // found
+    Object.assign(found, changes); //update object with changes
+    res.status(200).json(found);
+  } else {
+    //not found
+    res.status(404).json({ message: 'User not found' });
+  }
+  users = users.filter(u => u.id !== id);
+  res.json(found);
+})
 
 //server is listening and the port
 const PORT = 8000;
