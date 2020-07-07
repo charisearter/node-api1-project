@@ -1,11 +1,12 @@
 const express = require('express'); //bring in express
 const shortid = require('shortid');//bring in shortid
-
+const cors = require('cors'); //talk to frontend
 const server = express(); //get server
 
 //teach express how to read json from body
 
 server.use(express.json());
+server.use(cors());
 
 //use let so it can be changed
 //User array
@@ -29,7 +30,12 @@ server.get('/', (req, res) => {
 //GET request for users (only array of users) WORKS
 
 server.get('/api/users', (req, res) => {
-  res.status(200).json(users); //send user list 
+  if(users) {
+    res.status(200).json(users); //send user list 
+  } else {
+    res.status(500).json({ errorMessage: "The users information could not be retrieved." })
+  }
+  
 });
 
 //GET request for users by id (specific user)
@@ -39,11 +45,16 @@ server.get('/api/users/:id', (req, res) => {
   const u = users.filter(u => u.id !== id);
   const thatOne = users.find(u => u.id === id); //find the user with specific id
   if(thatOne) {
-    //if same id
+    if(!thatOne) {
+      res.status(500).json({ errorMessage: "The user information could not be retrieved." })
+    }else{
+        //if same id
     res.status(200).json(thatOne);
+    }
+  
   }else{
     //not found
-    res.status(404).json({ message: 'No user by that id found' });
+    res.status(404).json({ message: "The user with the specified ID does not exist." });
   }
 });
 
@@ -51,8 +62,14 @@ server.get('/api/users/:id', (req, res) => {
 server.post('/api/users', (req, res) => {
   const newUser = req.body;
   newUser.id = shortid.generate();
-  users.push(newUser);
-  res.status(200).json(newUser); //send user list 
+  
+  if(!newUser.name || !newUser.bio ) {
+    res.status(400).json({ errorMessage: "Please provide name and bio for the user."  })
+  }else{
+    //if good
+    users.push(newUser) ? res.status(201).json(newUser): res.status(500).json({ errorMessage: "There was an error while saving the user to the database" }) //send user list 
+  }
+  
 });
 
 //DELETE users 
