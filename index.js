@@ -51,7 +51,6 @@ server.get('/api/users/:id', (req, res) => {
         //if same id
     res.status(200).json(thatOne);
     }
-  
   }else{
     //not found
     res.status(404).json({ message: "The user with the specified ID does not exist." });
